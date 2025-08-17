@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = "ap-south-1"   // Change to your region
-        AWS_ACCOUNT_ID = "376129878438" // Replace with your account ID
+        AWS_REGION = "ap-south-1"  
+        AWS_ACCOUNT_ID = "376129878438"
         ECR_REPO = "jen/ecr"
         IMAGE_TAG = "${BUILD_NUMBER}"
         EC2_HOST = "ec2-13-127-252-105.ap-south-1.compute.amazonaws.com"
@@ -19,7 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t $ECR_REPO:$IMAGE_TAG ."
+                    sh "docker build -t ${ECR_REPO}:${IMAGE_TAG} ."
                 }
             }
         }
@@ -28,10 +28,10 @@ pipeline {
             steps {
                 script {
                     sh """
-                    aws ecr get-login-password --region $AWS_REGION \
-                        | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-                    docker tag $ECR_REPO:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
-                    docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+                    aws ecr get-login-password --region ${AWS_REGION} \
+                        | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                    docker tag ${ECR_REPO}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                    docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
                     """
                 }
             }
@@ -42,13 +42,13 @@ pipeline {
                 script {
                     sshagent (credentials: ['ec2-key']) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no ec2-user@$EC2_HOST '
-                          aws ecr get-login-password --region $AWS_REGION \
-                              | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com &&
-                          docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG &&
+                        ssh -o StrictHostKeyChecking=no ec2-user@${EC2_HOST} '
+                          aws ecr get-login-password --region ${AWS_REGION} \
+                              | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com &&
+                          docker pull ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG} &&
                           docker stop myapp || true &&
                           docker rm myapp || true &&
-                          docker run -d --name myapp -p 80:80 $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+                          docker run -d --name myapp -p 80:80 ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
                         '
                         """
                     }
