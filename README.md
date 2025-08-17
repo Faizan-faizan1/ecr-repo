@@ -1,3 +1,60 @@
+
+## Project Description:
+
+This project demonstrates the implementation of a complete CI/CD pipeline for a Dockerized static web application using Jenkins, Docker, AWS ECR, and EC2. The pipeline automates the build, push, and deployment process, ensuring faster and reliable delivery of code to production.
+
+The project consists of a simple static HTML web page served by an NGINX Docker container. Jenkins is configured to automatically trigger the pipeline whenever new code is pushed to the GitHub repository using a webhook. The Docker image is then pushed to AWS Elastic Container Registry (ECR) and subsequently deployed on an AWS EC2 instance.
+
+## Key Features:
+
+# Automated CI/CD Pipeline:
+
+Code checkout from GitHub
+
+Docker image build
+
+Push to AWS ECR
+
+Deploy to EC2
+
+# Containerization:
+
+Uses Docker and NGINX to serve the static web page
+
+Easy to scale and deploy
+
+# AWS Integration:
+
+Stores Docker images in AWS ECR
+
+Deploys containerized app on EC2 instance
+
+# GitHub Webhook:
+
+Pipeline is triggered automatically on every code push
+
+# Rollback & Idempotency:
+
+Stops and removes existing Docker container before deploying new image
+
+Ensures the latest version is always live
+
+## Technologies Used:
+
+Jenkins – CI/CD automation
+
+Docker – Containerization
+
+AWS ECR – Docker registry
+
+AWS EC2 – Deployment server
+
+GitHub – Source code management
+
+NGINX – Web server
+
+
+
 1️⃣ Project Structure
 
 myapp/
@@ -126,5 +183,15 @@ Ensure Jenkins SSH key can access EC2 (ssh ec2-user@<EC2_PUBLIC_IP>).
 Use Git commit hash for Docker image tags instead of build number.
 
 Add rollback stage if deploy fails.
+
+
+
+### Outcome:
+
+Fully automated CI/CD pipeline that eliminates manual deployment steps.
+
+Immediate deployment of updated code on EC2 after every commit.
+
+Demonstrates hands-on experience with Docker, Jenkins, and AWS services.
 
 Add unit tests before building Docker image.
